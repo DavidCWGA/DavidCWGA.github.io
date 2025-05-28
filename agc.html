@@ -320,7 +320,7 @@
             if (lat === undefined || lon === undefined) return;
             const links = [
                 { name: "Apple Maps", url: `https://maps.apple.com/?ll=${lat},${lon}&t=m` },
-                { name: "Google Maps", url: `https://maps.google.com/?q=$${lat},${lon}&ll=${lat},${lon}&z=15` },
+                { name: "Google Maps", url: `https://maps.google.com/?q=${lat},${lon}&ll=${lat},${lon}&z=15` },
                 { name: "OpenStreetMap", url: `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=15/${lat}/${lon}` }
             ];
             links.forEach(linkInfo => {
