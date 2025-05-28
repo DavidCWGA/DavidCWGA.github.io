@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adaptive Geocode (AGC) Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        #leafletMap {
+            height: 400px;
+            border: 1px solid #ccc;
+            border-radius: 0.375rem;
+            cursor: crosshair;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            border: 1px solid #cbd5e1;
+        }
+        button {
+            transition: background-color 0.3s ease;
+        }
+        #externalMapLinks a {
+            padding: 0.5rem 0.75rem;
+            background-color: #e9ecef;
+            color: #007bff;
+            border-radius: 0.25rem;
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: background-color 0.2s ease-in-out;
+        }
+        #externalMapLinks a:hover {
+            background-color: #dee2e6;
+        }
+        #generatedCode { 
+            font-family: monospace;
+        }
+        #natoPhoneticDisplay {
+            font-size: 0.875rem; /* text-sm */
+            color: #4b5563; /* gray-600 */
+            margin-top: 0.25rem; /* mt-1 */
+            min-height: 1.25rem; 
+        }
+        #decodeMessageArea {
+            min-height: 1.25rem; 
+        }
+        /* Styling for the details/summary elements */
+        details > summary {
+            list-style: none; /* Remove default triangle */
+        }
+        details > summary::-webkit-details-marker {
+            display: none; /* Remove default triangle for Safari */
+        }
+        details > summary::before {
+            content: '► '; /* Collapsed marker */
+            margin-right: 0.25rem;
+            font-size: 0.8em;
+        }
+        details[open] > summary::before {
+            content: '▼ '; /* Expanded marker */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="bg-white p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-4xl">
+        <h1 class="text-3xl font-bold text-center text-gray-700 mb-6">Adaptive Geocode (AGC) Tool</h1>
+
+        <p class="text-sm text-gray-600 mb-8 text-center max-w-2xl mx-auto">
+            Adaptive Geocodes (AGCs) are short, human-readable codes that represent geographic locations. You can truncate an AGC from the end to represent a larger area with less precision, making them flexible for various levels of detail.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div class="bg-gray-50 p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold text-gray-700 mb-1">Encode Coordinates to AGC</h2>
+                <p class="text-xs text-gray-500 mb-4">Or use the interactive map below.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label for="latitude" class="block text-sm font-medium text-gray-600">Latitude (-90 to 90):</label>
+                        <input type="text" id="latitude" placeholder="e.g., 34.0522" class="mt-1 block w-full">
+                    </div>
+                    <div>
+                        <label for="longitude" class="block text-sm font-medium text-gray-600">Longitude (-180 to 180):</label>
+                        <input type="text" id="longitude" placeholder="e.g., -118.2437" class="mt-1 block w-full">
+                    </div>
+                    <div>
+                        <label for="codeLength" class="block text-sm font-medium text-gray-600">AGC Length (e.g., 1-15):</label>
+                        <input type="number" id="codeLength" value="8" min="1" max="15" class="mt-1 block w-full">
+                    </div>
+                    <button id="encodeButton" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                        Encode to AGC
+                    </button>
+                    <div>
+                        <label for="generatedCode" class="block text-sm font-medium text-gray-600">Generated AGC:</label>
+                        <input type="text" id="generatedCode" readonly class="mt-1 block w-full bg-gray-200 cursor-not-allowed">
+                        <p id="natoPhoneticDisplay" class="italic"></p> </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Decode AGC</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label for="codeToDecode" class="block text-sm font-medium text-gray-600">Enter AGC:</label>
+                        <input type="text" id="codeToDecode" placeholder="e.g., 9Q8F7P6G" class="mt-1 block w-full">
+                    </div>
+                    <button id="decodeButton" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow-md">
+                        Decode AGC
+                    </button>
+                    <div id="decodeMessageArea" class="text-sm mt-2"></div> <div>
+                        <label class="block text-sm font-medium text-gray-600">Decoded Center Coordinates (lat, lon):</label>
+                        <p id="decodedCoordsPElement" class="mt-1 p-2 h-10 block w-full bg-gray-200 rounded-md text-sm"></p>
+                    </div>
+                    
+                    <div id="externalMapLinksContainer" class="mt-4 pt-4 border-t border-gray-200">
+                        <h3 class="text-md font-semibold text-gray-600 mb-2">View on other maps:</h3>
+                        <div id="externalMapLinks" class="flex flex-wrap gap-2">
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-50 p-6 rounded-lg shadow mb-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4 text-center">Interactive Map</h2>
+            <div id="leafletMap" class="w-full max-w-3xl mx-auto"></div>
+            <p class="text-xs text-gray-500 text-center mt-2">Click on the map to select coordinates. Zoom in for increased precision and longer codes.</p>
+        </div>
+        
+        <div id="messageArea" class="mt-4 p-3 rounded-md text-sm text-center"></div>
+
+        <p class="text-xs text-gray-500">I made this! <a href="mailto:david@gloveraoki.net">David Glover-Aoki</a> in Woodside, California. (9741D)</p>
+
+        </div> <div class="w-full max-w-4xl mx-auto mt-2 mb-4 px-0 sm:px-6">
+
+        
+        <details class="bg-gray-100 p-4 rounded-lg shadow-md">
+            <summary class="font-semibold text-gray-700 cursor-pointer hover:text-blue-500 focus:outline-none">
+                AGC Algorithm Description
+            </summary>
+            <div class="mt-3 text-sm text-gray-600 space-y-2 prose prose-sm max-w-none">
+                <p>The Adaptive Geocode (AGC) algorithm converts geographic coordinates (latitude/longitude) into a variable-length string and vice-versa. It operates on a rectilinear projection of the world (90°S to 90°N, 180°W to 180°E).</p>
+                <h4 class="font-semibold mt-2">Encoding Process:</h4>
+                <ol class="list-decimal list-inside ml-4 space-y-1">
+                    <li><strong>Initial Grid:</strong> The world is first divided into an 8-column by 4-row grid (32 cells).</li>
+                    <li><strong>Cell Identification:</strong> The cell containing the target coordinates is identified. Cells are indexed row by row, then column by column (0-31).</li>
+                    <li><strong>First Character:</strong> The character from a predefined 36-character set (<code>0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ</code>) corresponding to this index (0-31) becomes the first character of the AGC.</li>
+                    <li><strong>Recursive Subdivision:</strong> The identified cell then becomes the new bounding box for the next level of precision.</li>
+                    <li><strong>Subsequent Grids:</strong> This new box is subdivided into a 6-column by 6-row grid (36 cells).</li>
+                    <li><strong>Subsequent Characters:</strong> The character (from the same 36-character set) corresponding to the sub-cell containing the coordinates (indexed 0-35) is appended to the AGC.</li>
+                    <li><strong>Iteration:</strong> Steps 4-6 are repeated until the desired code length (and thus precision) is achieved.</li>
+                </ol>
+                <h4 class="font-semibold mt-2">Decoding Process:</h4>
+                <p>Decoding reverses this process. Each character in the AGC refines the bounding box based on the 8x4 grid for the first character and 6x6 grids for subsequent characters. The character's index within the <code>ALPHABET</code> determines which cell of the current grid to select as the new, smaller bounding box. This is repeated for all characters in the AGC.</p>
+                <p>The center of the final bounding box is typically used as the decoded coordinate pair.</p>
+            </div>
+        </details>
+    </div>
+
+
+    <footer class="text-center p-4 mt-2"> <p class="text-xs text-gray-500">
+            The algorithm and methods used to generate and decode Adaptive Geocodes (AGCs) are free for public and private use, modification, and integration into any system. But it would be nice if you credited me somewhere. Thanks!
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+    <script>
+        const ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        const WORLD_BOX = { top: 90, right: 180, bottom: -90, left: -180 };
+        const NATO_PHONETIC_MAP = {
+            'A': 'Alfa', 'B': 'Bravo', 'C': 'Charlie', 'D': 'Delta', 'E': 'Echo',
+            'F': 'Foxtrot', 'G': 'Golf', 'H': 'Hotel', 'I': 'India', 'J': 'Juliett',
+            'K': 'Kilo', 'L': 'Lima', 'M': 'Mike', 'N': 'November', 'O': 'Oscar',
+            'P': 'Papa', 'Q': 'Quebec', 'R': 'Romeo', 'S': 'Sierra', 'T': 'Tango',
+            'U': 'Uniform', 'V': 'Victor', 'W': 'Whiskey', 'X': 'X-ray', 'Y': 'Yankee',
+            'Z': 'Zulu',
+            '0': 'Zero', '1': 'One', '2': 'Two', '3': 'Three', '4': 'Four',
+            '5': 'Fife', '6': 'Six', '7': 'Seven', '8': 'Eight', '9': 'Niner'
+        };
+
+        let latitudeInput, longitudeInput, codeLengthInput, encodeButton, generatedCodeInput, natoPhoneticDisplayP;
+        let codeToDecodeInput, decodeButton, decodedCoordsPElement, decodeMessageAreaDiv;
+        let messageArea, externalMapLinksDiv;
+        
+        let leafletMap;
+        let drawnLeafletLayers = [];
+
+        function calculateSubbox(box, cols, rows, col, row) {
+            const boxHeight = box.top - box.bottom;
+            const boxWidth = box.right - box.left;
+            const newTop = box.top - row * (boxHeight / rows);
+            const newRight = box.left + (col + 1) * (boxWidth / cols);
+            const newBottom = box.top - (row + 1) * (boxHeight / rows);
+            const newLeft = box.left + col * (boxWidth / cols);
+            return { top: newTop, right: newRight, bottom: newBottom, left: newLeft };
+        }
+
+        function subdivideBoxRecursive(box, position, cols, rows, currentCode, iterationsLeft) {
+            if (iterationsLeft === 0) return currentCode;
+            const boxHeight = box.top - box.bottom;
+            const boxWidth = box.right - box.left;
+            const lon = Math.min(box.right - 1e-7, Math.max(box.left, position.lon));
+            const lat = Math.min(box.top - 1e-7, Math.max(box.bottom, position.lat));
+            const col = Math.floor((lon - box.left) / (boxWidth / cols));
+            const row = Math.floor((box.top - lat) / (boxHeight / rows));
+            const index = row * cols + col;
+            if (index < 0 || index >= ALPHABET.length) {
+                console.error("Index out of bounds", {index, cols, rows, col, row, box, position});
+                return currentCode + "?"; 
+            }
+            currentCode += ALPHABET[index];
+            const newBox = calculateSubbox(box, cols, rows, col, row);
+            return subdivideBoxRecursive(newBox, position, 6, 6, currentCode, iterationsLeft - 1);
+        }
+
+        function generateCode(coords, codeLength) {
+            if (codeLength <= 0) return "";
+            return subdivideBoxRecursive(WORLD_BOX, coords, 8, 4, "", codeLength);
+        }
+
+        function decodeCode(code) {
+            let currentBox = { ...WORLD_BOX };
+            let cols = 8; let rows = 4;
+            for (let i = 0; i < code.length; i++) {
+                const char = code[i].toUpperCase();
+                const index = ALPHABET.indexOf(char);
+                if (index === -1) {
+                    return { error: true, message: `Invalid character '${char}' in AGC.` };
+                }
+                const col = index % cols;
+                const row = Math.floor(index / cols);
+                if (row >= rows || col >= cols) { 
+                    return { error: true, message: `Internal error: Index calculation for '${char}'.` };
+                }
+                currentBox = calculateSubbox(currentBox, cols, rows, col, row);
+                cols = 6; rows = 6;
+            }
+            return currentBox; 
+        }
+
+        function boxCenter(box) {
+            const y = (box.bottom + box.top) / 2;
+            const x = (box.left + box.right) / 2;
+            const errorLat = Math.abs(box.top - box.bottom);
+            const errorLon = Math.abs(box.right - box.left);
+            const error = Math.min(errorLat, errorLon);
+            let decimalPlaces = 0;
+            if (error > 0) {
+                decimalPlaces = Math.max(0, -Math.floor(Math.log10(error - 1e-9)));
+            }
+            decimalPlaces = Math.min(7, Math.max(2, decimalPlaces));
+            return {
+                lat: y, lon: x,
+                latStr: y.toFixed(decimalPlaces), lonStr: x.toFixed(decimalPlaces),
+                errorMargin: error
+            };
+        }
+        
+        function parseCoordinates(latStr, lonStr) {
+            function processString(s, isLat) {
+                let valStr = s.toUpperCase();
+                let negative = valStr.includes('S') || valStr.includes('W');
+                valStr = valStr.replace(/[NSEW\s]/g, '');
+                let val = parseFloat(valStr);
+                if (isNaN(val)) return NaN;
+                if (negative && val > 0) val = -val;
+                if (isLat && (val < -90 || val > 90)) return NaN;
+                if (!isLat && (val < -180 || val > 180)) return NaN;
+                return val;
+            }
+            const lat = processString(latStr, true);
+            const lon = processString(lonStr, false);
+            if (isNaN(lat) || isNaN(lon)) return null;
+            return { lat, lon };
+        }
+
+        function initializeLeafletMap() {
+            if (leafletMap) leafletMap.remove();
+            leafletMap = L.map('leafletMap').setView([20, 0], 2);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19,
+            }).addTo(leafletMap);
+            leafletMap.on('click', handleLeafletMapClick);
+        }
+
+        function drawBoxOnLeafletMap(box, fitMap = true) {
+            if (!leafletMap || !box) return;
+            clearLeafletMapHighlights(); 
+            const bounds = [[box.bottom, box.left], [box.top, box.right]];
+            const rectangle = L.rectangle(bounds, { 
+                color: "red", weight: 2, fillColor: "#ff0000", fillOpacity: 0.2 
+            }).addTo(leafletMap);
+            drawnLeafletLayers.push(rectangle);
+            if (fitMap) {
+                try {
+                    leafletMap.fitBounds(bounds, {padding: [20, 20]});
+                } catch (e) {
+                    console.error("Error fitting bounds: ", e, bounds);
+                    const center = boxCenter(box);
+                    leafletMap.setView([center.lat, center.lon], 10);
+                }
+            }
+        }
+
+        function clearLeafletMapHighlights() {
+            if (!leafletMap) return;
+            drawnLeafletLayers.forEach(layer => leafletMap.removeLayer(layer));
+            drawnLeafletLayers = [];
+        }
+
+        function updateExternalMapLinks(lat, lon) {
+            externalMapLinksDiv.innerHTML = '';
+            if (lat === undefined || lon === undefined) return;
+            const links = [
+                { name: "Apple Maps", url: `https://maps.apple.com/?ll=${lat},${lon}&t=m` },
+                { name: "Google Maps", url: `https://maps.google.com/?q=$${lat},${lon}&ll=${lat},${lon}&z=15` },
+                { name: "OpenStreetMap", url: `https://www.openstreetmap.org/?mlat=${lat}&mlon=${lon}#map=15/${lat}/${lon}` }
+            ];
+            links.forEach(linkInfo => {
+                const a = document.createElement('a');
+                a.href = linkInfo.url; a.textContent = linkInfo.name;
+                a.target = "_blank"; a.rel = "noopener noreferrer";
+                externalMapLinksDiv.appendChild(a);
+            });
+        }
+        
+        function getNatoPhonetic(agcString) {
+            if (!agcString) return "";
+            return agcString.toUpperCase().split('').map(char => NATO_PHONETIC_MAP[char] || char).join(' ');
+        }
+
+        function updateNatoDisplay(agc) {
+            natoPhoneticDisplayP.textContent = getNatoPhonetic(agc);
+        }
+
+
+        function showMessage(message, type = 'info') { 
+            messageArea.textContent = message;
+            messageArea.className = 'mt-4 p-3 rounded-md text-sm text-center';
+            if (type === 'error') messageArea.classList.add('bg-red-100', 'text-red-700');
+            else if (type === 'success') messageArea.classList.add('bg-green-100', 'text-green-700');
+            else messageArea.classList.add('bg-blue-100', 'text-blue-700');
+        }
+        function clearMessage() { 
+            messageArea.textContent = '';
+            messageArea.className = 'mt-4 p-3 rounded-md text-sm text-center';
+        }
+        function showDecodeMessage(message, type = 'info') { 
+            decodeMessageAreaDiv.textContent = message;
+            decodeMessageAreaDiv.className = 'text-sm mt-2 min-h-[1.25rem]'; 
+            if (type === 'error') decodeMessageAreaDiv.classList.add('text-red-700');
+            else if (type === 'success') decodeMessageAreaDiv.classList.add('text-green-700');
+            else decodeMessageAreaDiv.classList.add('text-gray-700'); 
+        }
+        function clearDecodeMessage() {
+             showDecodeMessage("", "info");
+        }
+
+
+        function handleEncode() {
+            clearMessage(); 
+            clearDecodeMessage(); 
+            const latStr = latitudeInput.value.trim();
+            const lonStr = longitudeInput.value.trim();
+            const length = parseInt(codeLengthInput.value);
+
+            if (!latStr || !lonStr) {
+                showMessage("Latitude and Longitude are required.", "error"); updateNatoDisplay(""); return;
+            }
+            if (isNaN(length) || length < 1 || length > 15) {
+                showMessage("AGC length must be a number between 1 and 15.", "error"); updateNatoDisplay(""); return;
+            }
+            const coords = parseCoordinates(latStr, lonStr);
+            if (!coords) {
+                showMessage("Invalid coordinate format or range.", "error"); updateNatoDisplay(""); return;
+            }
+            latitudeInput.value = coords.lat.toFixed(6);
+            longitudeInput.value = coords.lon.toFixed(6);
+
+            const agc = generateCode(coords, length);
+            generatedCodeInput.value = agc;
+            updateNatoDisplay(agc);
+            codeToDecodeInput.value = agc; 
+            showMessage(`Encoded to AGC: ${agc}`, 'success');
+
+            const decodeResult = decodeCode(agc); 
+            if (decodeResult && !decodeResult.error) {
+                const decodedBox = decodeResult;
+                const center = boxCenter(decodedBox);
+                decodedCoordsPElement.textContent = `${center.latStr}, ${center.lonStr}`;
+                updateExternalMapLinks(center.lat, center.lon);
+                drawBoxOnLeafletMap(decodedBox, true);
+            } else {
+                console.error("Internal error decoding a generated AGC:", agc, decodeResult ? decodeResult.message : "Unknown decode error");
+                showMessage("Internal error processing generated AGC.", "error");
+                decodedCoordsPElement.textContent = "";
+                updateExternalMapLinks();
+            }
+        }
+
+        function handleDecode() {
+            clearMessage(); 
+            const agc = codeToDecodeInput.value.trim().toUpperCase();
+            if (!agc) {
+                showDecodeMessage("Please enter an AGC to decode.", "error");
+                decodedCoordsPElement.textContent = ""; updateExternalMapLinks(); updateNatoDisplay("");
+                return;
+            }
+
+            const result = decodeCode(agc);
+            if (result && !result.error) {
+                const box = result;
+                const center = boxCenter(box);
+                decodedCoordsPElement.textContent = `${center.latStr}, ${center.lonStr}`;
+                latitudeInput.value = center.latStr;
+                longitudeInput.value = center.lonStr;
+                generatedCodeInput.value = agc; 
+                updateNatoDisplay(agc);
+                codeLengthInput.value = agc.length;
+
+                showDecodeMessage("AGC decoded successfully.", "success"); 
+                updateExternalMapLinks(center.lat, center.lon);
+                drawBoxOnLeafletMap(box, true);
+            } else {
+                showDecodeMessage(result ? result.message : "Unknown error decoding AGC.", "error");
+                decodedCoordsPElement.textContent = "";
+                updateExternalMapLinks();
+                updateNatoDisplay(""); 
+            }
+        }
+
+        function handleLeafletMapClick(event) {
+            clearMessage(); 
+            clearDecodeMessage();
+            const coords = { 
+                lat: event.latlng.lat, 
+                lon: (event.latlng.lng + 540) % 360 - 180 
+            };
+            latitudeInput.value = coords.lat.toFixed(6);
+            longitudeInput.value = coords.lon.toFixed(6);
+            
+            const mapBounds = leafletMap.getBounds();
+            const viewSpanLat = mapBounds.getNorth() - mapBounds.getSouth();
+            let dynamicLength = 8; 
+            if (viewSpanLat > 1e-6 && viewSpanLat < 180) { 
+                dynamicLength = 1 + (Math.log(180 / viewSpanLat) / Math.log(6));
+            }
+            const newLength = Math.max(1, Math.min(15, Math.round(dynamicLength)));
+            codeLengthInput.value = newLength;
+            
+            const agc = generateCode(coords, newLength);
+            generatedCodeInput.value = agc;
+            updateNatoDisplay(agc);
+            codeToDecodeInput.value = agc;
+            
+            const decodeResult = decodeCode(agc); 
+            if (decodeResult && !decodeResult.error) {
+                const decodedBox = decodeResult;
+                const center = boxCenter(decodedBox);
+                decodedCoordsPElement.textContent = `${center.latStr}, ${center.lonStr}`;
+                updateExternalMapLinks(center.lat, center.lon);
+                drawBoxOnLeafletMap(decodedBox, false); 
+                showMessage(`Map click: AGC ${agc} (L${newLength}) generated.`, 'info');
+            } else {
+                console.error("Internal error decoding a map-click generated AGC:", agc, decodeResult ? decodeResult.message : "Unknown decode error");
+                showMessage("Internal error processing map click.", "error");
+                decodedCoordsPElement.textContent = "";
+                updateExternalMapLinks();
+                updateNatoDisplay("");
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            latitudeInput = document.getElementById('latitude');
+            longitudeInput = document.getElementById('longitude');
+            codeLengthInput = document.getElementById('codeLength');
+            encodeButton = document.getElementById('encodeButton');
+            generatedCodeInput = document.getElementById('generatedCode');
+            natoPhoneticDisplayP = document.getElementById('natoPhoneticDisplay'); 
+            
+            codeToDecodeInput = document.getElementById('codeToDecode');
+            decodeButton = document.getElementById('decodeButton');
+            decodedCoordsPElement = document.getElementById('decodedCoordsPElement');
+            decodeMessageAreaDiv = document.getElementById('decodeMessageArea'); 
+            
+            messageArea = document.getElementById('messageArea');
+            externalMapLinksDiv = document.getElementById('externalMapLinks');
+
+            encodeButton.addEventListener('click', handleEncode);
+            decodeButton.addEventListener('click', handleDecode);
+            
+            initializeLeafletMap();
+            updateExternalMapLinks(); 
+            clearDecodeMessage(); 
+            updateNatoDisplay(""); 
+        });
+    </script>
+</body>
+</html>
