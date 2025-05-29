@@ -63,6 +63,7 @@
         details[open] > summary::before {
             content: '▼ '; /* Expanded marker */
         }
+        .kanji-name, .romaji-name { display: none; } /* Hide both initially */
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
@@ -120,7 +121,7 @@
               <li><code>8LD</code>: Moku o Keawe</li>
               <li><code>3Z5D0</code>: Silverstone</li>
               <li><code>4UDZCU</code>: Tour Eiffel</li>
-              <li><code>F69HIUJ</code>: Ryōgoku Kokugikan</li>
+              <li id="nameDisplay"><code>F69HIUJ</code>: <span class="romaji-name">Ryōgoku Kokugikan</span><span class="kanji-name">両国国技館</span></li>
             </ul>
           </div>
         </div>
@@ -496,6 +497,16 @@
         }
         
         document.addEventListener('DOMContentLoaded', () => {
+            const userLang = navigator.language || navigator.userLanguage;
+            const nameDisplay = document.getElementById('nameDisplay');
+            const kanjiName = nameDisplay.querySelector('.kanji-name');
+            const romajiName = nameDisplay.querySelector('.romaji-name');
+
+            if (userLang.startsWith('ja')) {
+            kanjiName.style.display = 'inline';
+            } else {
+            romajiName.style.display = 'inline';
+            }
             latitudeInput = document.getElementById('latitude');
             longitudeInput = document.getElementById('longitude');
             codeLengthInput = document.getElementById('codeLength');
