@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Acorn Computers</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+	<style>
+		body {
+			font-family: 'Inter', sans-serif;
+			-webkit-tap-highlight-color: transparent;
+		}
+		/* Style for the active navigation link */
+		.nav-link.active {
+			background-color: #10B981; /* Emerald 500 */
+			color: white;
+		}
+		/* Simple transition for page visibility */
+		.page {
+			display: none;
+			opacity: 0;
+			transition: opacity 0.3s ease-in-out;
+		}
+		.page.active {
+			display: block;
+			opacity: 1;
+		}
+		/* Custom styles for better readability and feel */
+		h1, h2, h3 {
+			font-weight: 700;
+		}
+		h2 {
+			border-bottom: 2px solid #10B981;
+			padding-bottom: 0.5rem;
+			margin-bottom: 1rem;
+		}
+		p, li {
+			line-height: 1.6;
+		}
+	</style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+	<div class="max-w-2xl mx-auto bg-white shadow-lg">
+		<!-- Header -->
+		<header class="bg-gray-800 text-white p-4 sticky top-0 z-10">
+			<h1 class="text-2xl text-center font-bold">Acorn Computers</h1>
+		</header>
+
+		<!-- Navigation -->
+		<nav class="bg-gray-200 p-2 shadow-md sticky top-[72px] z-10">
+			<ul id="navigation" class="flex flex-wrap justify-center gap-2">
+				<li><a href="#master" class="nav-link block px-4 py-2 rounded-md bg-gray-300 hover:bg-emerald-500 hover:text-white transition-colors duration-200">BBC Master</a></li>
+				<li><a href="#a3020" class="nav-link block px-4 py-2 rounded-md bg-gray-300 hover:bg-emerald-500 hover:text-white transition-colors duration-200">Acorn A3020</a></li>
+				<li><a href="#pi" class="nav-link block px-4 py-2 rounded-md bg-gray-300 hover:bg-emerald-500 hover:text-white transition-colors duration-200">Raspberry Pi</a></li>
+				<li><a href="#clp" class="nav-link block px-4 py-2 rounded-md bg-gray-300 hover:bg-emerald-500 hover:text-white transition-colors duration-200">Literacy Project</a></li>
+				<li><a href="#econet" class="nav-link block px-4 py-2 rounded-md bg-gray-300 hover:bg-emerald-500 hover:text-white transition-colors duration-200">Econet</a></li>
+			</ul>
+		</nav>
+
+		<!-- Main Content Area -->
+		<main id="content" class="p-6">
+			<!-- Page: BBC Master -->
+			<div id="master" class="page space-y-4">
+				<h2 class="text-3xl text-emerald-600">The BBC Master 128</h2>
+				<p>The computer in front of you is a <strong>BBC Master 128</strong>, released in 1986. While it's an impressive machine, its story really begins with its famous predecessor, the <strong>BBC Micro</strong>.</p>
+				
+				<h3 class="text-xl font-semibold mt-4">A Computer for a Nation</h3>
+				<p>In the early 1980s, the UK was on the cusp of a home computer boom, but computer literacy was low. The British Broadcasting Corporation (BBC), as part of its public service mission, launched the ambitious Computer Literacy Project. They needed a single, versatile computer to feature on their TV shows and in schools across the country. After a competitive selection process, a small Cambridge-based company called Acorn won the contract with the machine that would become the BBC Micro.</p>
+				<p>For an entire generation in Britain, the "Beeb" was their first experience with computing. It was robust, powerful, and famously expandable. It was designed from the ground up to be a flexible tool for learning and creativity, not just a games machine, similar to the American Apple II.</p>
+
+				<h3 class="text-xl font-semibold mt-4">Teletext and "Mode 7"</h3>
+				<p>A unique feature of the BBC Micro was <strong>Mode 7</strong>, a very low-memory graphics mode that used the same technology as teletext - data sent in the vertical blanking interval of a broadcast TV signal containing text and rudimentary graphics, popular in the UK. This allowed the computer to receive and display broadcast teletext pages with the addition of a simple adapter, essentially turning the computer into an early version of a web browser. Ask for a simulated demo!</p>
+
+				<h3 class="text-xl font-semibold mt-4">The Master: A Refined Successor</h3>
+				<p>The Master 128 you see here is the direct successor to that legendary machine. It maintains near-perfect compatibility while offering more memory (128KB), a numeric keypad, and a wealth of bundled software on ROM chips that load instantly. It represents the ultimate evolution of the 8-bit computer that helped shape the UK's tech landscape.</p>
+
+				<div class="exhibitor-info"></div>
+			</div>
+
+			<!-- Page: Acorn A3020 -->
+			<div id="a3020" class="page space-y-4">
+				<h2 class="text-3xl text-emerald-600">The Acorn A3020</h2>
+				<p>You are looking at an <strong>Acorn A3020</strong>, a compact computer from 1992. While it may look like other computers of its era, what's inside it is revolutionary. This machine is part of the <strong>Acorn Archimedes</strong> family, which introduced the world to the processor in your smartphone, tablet, and now Mac: <strong>ARM</strong>.</p>
+
+				<h3 class="text-xl font-semibold mt-4">The Need for Speed</h3>
+				<p>By the mid-1980s, the 8-bit processors used in computers like the BBC Micro were showing their age. Acorn's engineers, wanting to build a next-generation machine, were unimpressed with the off-the-shelf processors available from American companies like Intel and Motorola. So, they decided to do something radical: design their own.</p>
+				
+				<h3 class="text-xl font-semibold mt-4">The Birth of ARM</h3>
+				<p>Inspired by research from Berkeley, they created the <strong>Acorn RISC Machine</strong>, or <strong>ARM</strong>. RISC (Reduced Instruction Set Computing) is a design philosophy that favors a simpler, smaller set of instructions that execute very quickly. The first ARM processor was incredibly efficient and powerful for its low power consumption and cost. When the first Archimedes computers launched in 1987, they were among the fastest personal computers in the world, far outperforming more expensive IBM PCs and Apple Macs of the time.</p>
+				
+				<h3 class="text-xl font-semibold mt-4">The Compact Archimedes</h3>
+				<p>The A3020 you see here is a later, more refined model from the Archimedes range. It integrates the computer, keyboard, and disk drive into a single, sleek unit designed for educational use. It runs the same powerful ARM processor and groundbreaking <strong>RISC OS</strong> operating system as its larger siblings, making it a compact powerhouse that demonstrated the potential of Acorn's revolutionary ARM architecture.</p>
+
+				<div class="exhibitor-info"></div>
+			</div>
+
+			<!-- Page: Raspberry Pi -->
+			<div id="pi" class="page space-y-4">
+				<h2 class="text-3xl text-emerald-600">The Raspberry Pi 400 & RISC OS</h2>
+				<p>This is a modern <strong>Raspberry Pi 400</strong>, but it's not running Linux as you might expect. It's running <strong>RISC OS 5</strong>, the direct, continuously-developed descendant of the operating system created for the Acorn Archimedes back in 1987.</p>
+
+				<h3 class="text-xl font-semibold mt-4">A Living Legacy</h3>
+				<p>After Acorn Computers was broken up in the late 1990s, development of its unique operating system was continued by a dedicated community of enthusiasts and commercial companies. Today, RISC OS Open Ltd manages the open-source development of RISC OS 5, which runs on modern ARM-based hardware like the Raspberry Pi, keeping the platform alive and evolving.</p>
+				
+				<h3 class="text-xl font-semibold mt-4">How is RISC OS Different?</h3>
+				<p>Using RISC OS feels very different from Windows or macOS. Its philosophy is one of speed, simplicity, and efficiency. Here are some key differences:</p>
+				<ul class="list-disc list-inside ml-4 space-y-2">
+					<li><strong>Cooperative Multitasking:</strong> Instead of the OS forcing applications to share processor time (pre-emptive), applications are expected to cooperate and yield control. This is simpler and faster but means one misbehaving app can freeze the system.</li>
+					<li><strong>Three-Button Mouse:</strong> The mouse is fundamental and uses all three buttons. <strong>SELECT</strong> (left) selects things. <strong>MENU</strong> (middle) opens context-sensitive menus everywhere. <strong>ADJUST</strong> (right) makes secondary selections or modifies an action.</li>
+					<li><strong>The Icon Bar:</strong> The bar at the bottom holds icons for storage devices and running applications. There's no separate "Start Menu" or "Dock".</li>
+					<li><strong>Drag and Drop Everywhere:</strong> To save a file, you often just drag an icon from the application's save window directly into a folder window.</li>
+					<li><strong>Apps are Directories:</strong> Applications are not complex installers. They are just special folders with an exclamation mark (!) in front of their name. To "install," you copy the folder. To "uninstall," you delete it. Try looking inside one by holding down Shift while double-clicking on it.</li>
+				</ul>
+
+				<h3 class="text-xl font-semibold mt-4">A Quick Guide to Trying RISC OS</h3>
+				<ul class="list-disc list-inside ml-4 space-y-2">
+					<li><strong>Click the middle mouse button!</strong> (In this demo, that's the mouse wheel. Click it down instead of rolling it.) Try it on the desktop background, on an icon, or inside a window to see the context menus.</li>
+					<li>Click on the SD card icon on the far left of the icon bar to see your storage.</li>
+					<li>Click on the `Apps` icon in the menu bar to see built-in applications.</li>
+					<li>See if you can figure out how to save a text file from the "!Edit" or "!StrongED" applications.</li>
+				</ul>
+
+				<div class="exhibitor-info"></div>
+			</div>
+			
+			<!-- Page: Computer Literacy Project -->
+			<div id="clp" class="page space-y-4">
+				<h2 class="text-3xl text-emerald-600">The BBC Computer Literacy Project</h2>
+				<p>To understand the computers in this exhibit, you have to understand the uniquely British phenomenon that created them: the BBC Computer Literacy Project.</p>
+
+				<h3 class="text-xl font-semibold mt-4">A Public Broadcaster's Mission</h3>
+				<p>In the early 1980s, the BBC—the UK's publicly funded broadcaster—saw the dawn of the personal computer and recognized a duty to educate the nation about the coming technological revolution. They decided this couldn't be done with just TV shows; they needed an integrated approach that included books, software, and a powerful, standardized computer that could be used in schools and homes across the country.</p>
+				<p>This was a concept almost unthinkable in the American market, which was driven purely by commercial competition. The BBC's goal wasn't to sell the most computers, but to create the best possible tool for learning.</p>
+
+				<h3 class="text-xl font-semibold mt-4">An Integrated Ecosystem</h3>
+				<p>The project launched with a TV series called <cite>The Computer Programme</cite>. Viewers could watch the show, buy the accompanying book, and then try out the programming concepts on the official computer: the BBC Micro.</p>
+				<p>This created a powerful educational ecosystem. The government subsidized the purchase of BBC Micros for schools, ensuring that a generation of children learned to code on a single, powerful platform. This fostered a huge community of developers and enthusiasts, creating a vibrant software industry in the UK. The TV in this exhibit is showing episodes from these influential programs.</p>
+
+				<div class="exhibitor-info"></div>
+			</div>
+
+			<!-- Page: Econet -->
+			<div id="econet" class="page space-y-4">
+				<h2 class="text-3xl text-emerald-600">Econet: Networking for Schools</h2>
+				<p>The Acorn computers at this exhibit are all connected using <strong>Econet</strong>, Acorn's proprietary networking system from the 1980s.</p>
+
+				<h3 class="text-xl font-semibold mt-4">Low-Cost and Effective</h3>
+				<p>In an era before Ethernet was cheap and ubiquitous, Econet was a brilliantly simple and cost-effective solution for networking computers, particularly in schools. It allowed a classroom full of BBC Micros to share expensive peripherals like disk drives and printers, which were connected to a central "File Server" machine.</p>
+				<p>It used a simple five-wire cable (similar to a phone cord) and a "daisy chain" topology. The system was robust enough for its time and became the standard for school networks across the UK.</p>
+				
+				<h3 class="text-xl font-semibold mt-4">The Largest Econet in the USA?</h3>
+				<p>The network you see here, connecting this exhibit with our neighbors, is comprised of several Acorn machines. While it's difficult to verify, we believe this may be the <strong>largest functional Econet network ever assembled in the United States</strong>, a small piece of UK computing history right here in California.</p>
+				
+				<h3 class="text-xl font-semibold mt-4">A Note on Reliability</h3>
+				<p>Please be aware that running a 40-year-old networking system can be challenging! Econet in the 21st century can be a bit temperamental. While the demo software on the machines may not be actively using the network, please <strong>feel free to ask for a demonstration!</strong> We will do our best to show you file sharing and other features in action, but we appreciate your patience if the network gods are not smiling on us today.</p>
+
+				<div class="exhibitor-info"></div>
+			</div>
+
+		</main>
+	</div>
+
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const content = document.getElementById('content');
+			const navigation = document.getElementById('navigation');
+			const pages = content.querySelectorAll('.page');
+			const navLinks = navigation.querySelectorAll('.nav-link');
+			const exhibitorInfoPlaceholder = `
+				<div class="mt-8 pt-6 border-t-2 border-gray-200 text-center">
+					<div class="flex items-center justify-center space-x-4">
+						<img src="me.jpeg" alt="David Glover-Aoki" class="w-20 h-20 rounded-full bg-gray-200">
+						<div>
+							<p class="text-gray-600">I wrote this! Write to me:</p>
+							<p class="font-bold text-lg">David Glover-Aoki</p>
+							<p class="text-gray-600">Email: <a href="mailto:david@gloveraoki.net">david@gloveraoki.net</a></p>
+							<p class="text-gray-600">Mastodon: <a href="https://mastodon.xyz/@davidga">@davidga@mastodon.xyz</a></p>
+							<p class="text-gray-600">Bluesky: <a href="https://bsky.app/profile/davidga.me">@davidga.me</a></p>
+						</div>
+					</div>
+				</div>
+			`;
+
+			// Inject exhibitor info into each page
+			document.querySelectorAll('.exhibitor-info').forEach(el => {
+				el.innerHTML = exhibitorInfoPlaceholder;
+			});
+
+			function showPage(hash) {
+				// Determine the target page. Default to '#master'
+				const targetId = hash ? hash.substring(1) : 'master';
+				const targetPage = document.getElementById(targetId) || document.getElementById('master');
+
+				// Hide all pages
+				pages.forEach(page => {
+					page.classList.remove('active');
+				});
+				
+				// Show the target page
+				if (targetPage) {
+					targetPage.classList.add('active');
+				}
+
+				// Update active state in navigation
+				navLinks.forEach(link => {
+					if (link.getAttribute('href') === `#${targetId}`) {
+						link.classList.add('active');
+					} else {
+						link.classList.remove('active');
+					}
+				});
+			}
+
+			// Listen for hash changes
+			window.addEventListener('hashchange', () => {
+				showPage(window.location.hash);
+			});
+
+			// Show initial page based on the hash, or default
+			showPage(window.location.hash);
+		});
+	</script>
+</body>
+</html>
