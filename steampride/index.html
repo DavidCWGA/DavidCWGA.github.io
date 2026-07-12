@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>steampride</title>
+</head>
+<body>
+<h1>steampride</h1>
+<p><img src="steampride.jpg" style="width: 309px; height: 291px; float: right;" alt="The front of a Steam Machine showing pretty colors on the LED light bar">
+Easily set the Steam Machine's LED light bar to colored patterns. A single-file Python script with no
+dependencies, for SteamOS.</p>
+<p><a href="steampride.gz">Download steampride.gz</a></p>
+<h2>Installation</h2>
+<p>On your Steam Machine, switch to Desktop mode and open a
+terminal (Konsole), then run:</p>
+<pre>
+curl -LO https://davidcwga.github.io/steampride/steampride.gz
+gunzip steampride.gz
+chmod +x steampride
+</pre>
+<p>That's it. SteamOS already includes Python, and the script needs
+nothing else. Optionally move it somewhere on your PATH:</p>
+<pre>
+mkdir -p ~/.local/bin
+mv steampride ~/.local/bin/
+</pre>
+<h2>Usage</h2>
+<p>Steam only reads the LED configuration when it starts, so
+steampride will offer to shut Steam down before applying a pattern.
+Your new colors appear the next time Steam starts (for example when
+you return to Game mode).</p>
+<pre>
+steampride pride              # the classic rainbow flag
+steampride trans              # transgender flag
+steampride --list             # show all presets, in color
+steampride red white blue     # your own stripes
+steampride '#ff8800' -b 60%   # solid color, 60% brightness
+steampride --off              # turn the light bar off
+steampride --show             # show the current LED settings
+</pre>
+<p>Presets: pride, progress, trans, bi, pan, nonbinary, lesbian,
+ace, aro, agender, genderfluid, genderqueer, intersex.</p>
+<p>Custom patterns take two or more <code>COLOR[:WIDTH]</code>
+bands (colors can be CSS names, hex, or r,g,b triplets), or a
+pattern file in <code>~/.config/steampride/patterns</code>. Use
+<code>-n</code> for a dry run, and see <code>steampride
+--help</code> for everything else.</p>
+<h2>Safety</h2>
+<p>steampride edits only the LED settings inside Steam's
+<code>localconfig.vdf</code>, leaving every other byte of the file
+untouched. It refuses to write if the file doesn't look exactly as
+expected, writes atomically, and keeps a daily backup next to the
+original.</p>
+<hr>
+<p><a href="/">David Glover-Aoki</a></p>
+</body>
+</html>
